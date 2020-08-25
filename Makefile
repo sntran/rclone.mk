@@ -13,20 +13,12 @@ MAKEFLAGS += --no-builtin-variables
 TRANSFERS = 8
 ACCOUNTS = accounts/*.json
 
-# Recursive wildcard function to find a pattern inside a folder.
-# Example: $(call rwildcard,css,*.scss)
-rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
-
-# Returns all whitespace-separated words in $2 that are after $1.
-after = $(if $(findstring $1,$2),\
-	$(call after,$1,$(wordlist 2,$(words $2),$2)),\
-	$2\
-)
-
 .PHONY: rclone
 # Installs rclone
 rclone:
 	@curl https://rclone.org/install.sh | sudo bash -s beta
+	
+.PRECIOUS: $(wildcard *.conf)
 
 # Performs a rclone sync on a config file.
 # The config file should define at least a "source" and "target" remotes.
